@@ -1,3 +1,3 @@
 # djangoSE
-Learn django
-Here i'm training my django superpower
+Learn django.
+Here i'm training my django superpower!
