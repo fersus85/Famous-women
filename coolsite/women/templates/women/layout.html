@@ -14,7 +14,15 @@
 <tr><td valign=top>
 {% block mainmenu %}
 
-	{% show_menu cat_selected=0 %}
+	{% if request.user.is_authenticated %}
+
+		{% show_menu cat_selected=0 %}
+
+	{% else %}
+
+		{% show_menu2 cat_selected=0 %}
+
+	{% endif %}
 
 {% endblock mainmenu %}
 

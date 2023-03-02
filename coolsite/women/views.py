@@ -1,8 +1,11 @@
+from django.contrib.sessions.models import Session
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from .forms import *
 from .models import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class WomenHome(ListView):
@@ -32,12 +35,16 @@ class WomenHome(ListView):
 
 
 def about(request):
+
+    print(request.user.is_authenticated)
     return render(request, 'women/about.html', {'title': 'About site'})
 
 
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, CreateView):
     form_class = AddPostForm
     template_name = 'women/addpage.html'
+    success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,6 +1,8 @@
 from django import template
+from django.db.models import Count
+from django.http import request
+from django.contrib.sessions.models import Session
 from women.models import *
-
 
 register = template.Library()
 
@@ -9,22 +11,31 @@ register = template.Library()
 def get_categories():
     return Category.objects.all()
 
-
 @register.inclusion_tag('women/list_categories.html')
 def show_categories(sort=None, cat_selected=0):
-    if not sort:
-        cats = Category.objects.all()
-    else:
-        cats = Category.objects.order_by(sort)
+
+    cats = Category.objects.annotate(Count('women'))
 
     return {'cats': cats, 'cat_selected': cat_selected}
 
 
 @register.inclusion_tag('women/main_menu.html')
 def show_menu(cat_selected=0):
+
     menu = [{'title': 'About site', 'url_name': 'about'},
             {'title': 'Add article', 'url_name': 'add_page'},
             {'title': 'Callback', 'url_name': 'contact'},
             {'title': 'Enter', 'url_name': 'login'}
             ]
+
+    return {'menu': menu, 'cat_selected': cat_selected}
+
+
+@register.inclusion_tag('women/main_menu.html')
+def show_menu2(cat_selected=0):
+
+    menu = [{'title': 'About site', 'url_name': 'about'},
+             {'title': 'Callback', 'url_name': 'contact'},
+             {'title': 'Enter', 'url_name': 'login'}
+             ]
     return {'menu': menu, 'cat_selected': cat_selected}
