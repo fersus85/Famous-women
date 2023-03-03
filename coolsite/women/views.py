@@ -1,14 +1,12 @@
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from django.contrib.sessions.models import Session
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from .forms import *
 from .models import *
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from .utils import DataMixin
 
 
@@ -26,7 +24,7 @@ class WomenHome(ListView):
         return context
 
     def get_queryset(self):
-        return Women.objects.filter(is_published=True)
+        return Women.objects.filter(is_published=True).select_related('cat')
 
 
 # def index(request):
@@ -68,14 +66,19 @@ class AddPage(LoginRequiredMixin, CreateView):
 #     return render(request, 'women/addpage.html', {'form': form, 'title': 'Add article'})
 
 
-def contact(request):
-    return HttpResponse('contacts')
+class ContactFormView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'women/contact.html'
+    success_url = reverse_lazy('home')
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'callback'
+        return context
 
-def login(request):
-    return HttpResponse('authorization')
-
-
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return redirect('home')
 # def show_post(request, post_slug):
 #     post = get_object_or_404(Women, slug=post_slug)
 #     context = {
@@ -96,6 +99,7 @@ class ShowPost(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = context['post']
         return context
+
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Page not found</h1>')
@@ -126,7 +130,7 @@ class WomenCategory(ListView):
     allow_empty = False
 
     def get_queryset(self):
-        return Women.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
+        return Women.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True).select_related('cat')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,7 +154,6 @@ class RegisterUser(DataMixin, CreateView):
 class LoginUser(DataMixin, LoginView):
     form_class = LoginUserForm
     template_name = 'women/login.html'
-
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
