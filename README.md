@@ -1,3 +1,5 @@
-# djangoSE
-Learn django.
-Here i'm training my django superpower!
+# Information site about famous women. 
+
+Made with Django.
+
+You can run it with your local server.
