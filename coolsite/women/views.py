@@ -1,7 +1,7 @@
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseNotFound
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, FormView
 from .forms import *
@@ -15,7 +15,6 @@ class WomenHome(ListView):
     model = Women
     template_name = 'women/index.html'
     context_object_name = 'posts'
-    # extra_context = {'title': 'Main page'} // add immutable data
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,16 +24,6 @@ class WomenHome(ListView):
 
     def get_queryset(self):
         return Women.objects.filter(is_published=True).select_related('cat')
-
-
-# def index(request):
-#     posts = Women.objects.all()
-#
-#     context = {
-#         'posts': posts,
-#         'title': 'Main page',
-#     }
-#     return render(request, 'women/index.html', context=context)
 
 
 def about(request):
@@ -54,17 +43,6 @@ class AddPage(LoginRequiredMixin, CreateView):
         context['title'] = 'Add article'
         return context
 
-# def addpage(request):
-#     if request.method == 'POST':
-#         form = AddPostForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('home')
-#
-#     else:
-#         form = AddPostForm()
-#     return render(request, 'women/addpage.html', {'form': form, 'title': 'Add article'})
-
 
 class ContactFormView(DataMixin, FormView):
     form_class = ContactForm
@@ -79,14 +57,6 @@ class ContactFormView(DataMixin, FormView):
     def form_valid(self, form):
         print(form.cleaned_data)
         return redirect('home')
-# def show_post(request, post_slug):
-#     post = get_object_or_404(Women, slug=post_slug)
-#     context = {
-#         'post': post,
-#         'title': post.title,
-#         'cat_selected': post.cat_id
-#     }
-#     return render(request, 'women/post.html', context=context)
 
 
 class ShowPost(DetailView):
@@ -101,25 +71,8 @@ class ShowPost(DetailView):
         return context
 
 
-def pageNotFound(request, exception):
+def page_not_found(request, exception):
     return HttpResponseNotFound('<h1>Page not found</h1>')
-
-
-# def show_category(request, cat_slug):
-#     if cat_slug == 'singers':
-#         cat_id = 2
-#     else:
-#         cat_id = 1
-#     posts = Women.objects.filter(cat_id=cat_id)
-#
-#     if len(posts) == 0:
-#         raise Http404()
-#
-#     context = {
-#         'posts': posts,
-#         'title': 'Categories'
-#     }
-#     return render(request, 'women/index.html', context=context)
 
 
 class WomenCategory(ListView):
