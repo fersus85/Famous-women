@@ -17,13 +17,16 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from coolsite import settings
-from women.views import pageNotFound
+from women.views import WomenApiView
+
+# from women.views import pageNotFound
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
     path('captcha/', include('captcha.urls')),
+    path('api/v1/women_list/', WomenApiView.as_view())
 ]
 
 if settings.DEBUG:
@@ -33,4 +36,4 @@ if settings.DEBUG:
     ] + urlpatterns
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = pageNotFound
+# handler404 = pageNotFound
