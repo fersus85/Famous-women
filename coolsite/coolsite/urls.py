@@ -17,16 +17,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from coolsite import settings
-from women.views import WomenApiView
+from women.views import *
 
 # from women.views import pageNotFound
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
     path('captcha/', include('captcha.urls')),
-    path('api/v1/women_list/', WomenApiView.as_view())
+    path('api/v1/women_list/', WomenApiView.as_view()),
+    path('api/v1/women_list/<int:pk>/', WomenAPIUpdate.as_view()),
+    path('api/v1/women_det/<int:pk>/', WomenAPIDetailView.as_view())
 ]
 
 if settings.DEBUG:

@@ -7,4 +7,4 @@ class WomenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Women
-        fields = ('title', 'cat_id')
+        fields = ('id', 'title', 'content', 'cat_id')
