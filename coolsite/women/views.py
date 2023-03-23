@@ -5,6 +5,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, FormView
 from rest_framework import generics
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from .forms import *
 from .models import *
@@ -127,16 +130,11 @@ def logout_user(request):
     return redirect('login')
 
 
-class WomenApiView(generics.ListAPIView):
+class WomenViewSet(ModelViewSet):
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
 
-
-class WomenAPIUpdate(generics.UpdateAPIView):
-    queryset = Women.objects.all()
-    serializer_class = WomenSerializer
-
-
-class WomenAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Women.objects.all()
-    serializer_class = WomenSerializer
+    @action(methods=['get'], detail=False)
+    def category(self, request):
+        cats = Category.objects.all()
+        return Response({'cats': [c.name for c in cats]})

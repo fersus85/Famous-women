@@ -18,16 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from coolsite import settings
 from women.views import *
-
+from rest_framework import routers
 # from women.views import pageNotFound
 
+router = routers.SimpleRouter()
+router.register(r'women', WomenViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
     path('captcha/', include('captcha.urls')),
-    path('api/v1/women_list/', WomenApiView.as_view()),
-    path('api/v1/women_list/<int:pk>/', WomenAPIUpdate.as_view()),
-    path('api/v1/women_det/<int:pk>/', WomenAPIDetailView.as_view())
+    path('api/v1/', include(router.urls))
 ]
 
 if settings.DEBUG:
